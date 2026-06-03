@@ -1,4 +1,4 @@
-from fastapi import FastAPI,Request
+from fastapi import FastAPI,Request, status
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 import os
@@ -32,3 +32,17 @@ def read_items(request: Request, name: str = "Taybah"):
         context={"name": name}
     )
 
+@app.get("/coins")
+def get_coins(): 
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM coins.coins")
+        coins = cursor.fetchall()
+        return coins
+
+@app.post("/coins", status_code = status.HTTP_201_CREATED)
+def insert_coin():
+    with connection.cursor() as cursor:
+        cursor.execute("INSERT into coins.coins (coin_name) VALUES ('Biscuit')")
+        cursor.execute("SELECT * from coins.coins")
+        coins = cursor.fetchall()
+        return coins
